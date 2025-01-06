@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,15 +6,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { ExternalLink } from 'lucide-react'
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
 
 export function PrayerInfoModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="link" className="text-emerald-700 hover:text-emerald-600">
+        <Button 
+          variant="link" 
+          className="text-black hover:text-gray-700"
+          aria-label="Learn about prayer time calculations"
+        >
           How are prayer times calculated?
         </Button>
       </DialogTrigger>
@@ -27,7 +31,7 @@ export function PrayerInfoModal() {
         </DialogHeader>
         <div className="space-y-4">
           <p>
-            Prayer times are calculated using astronomical formulas based on the sun's position and geographical location.
+            Prayer times are calculated using astronomical formulas based on the sun&apos;s position and geographical location.
           </p>
           <p>
             We use the Aladhan API, which offers various calculation methods. Our app uses Method 2, which corresponds to the Islamic Society of North America (ISNA) method.
@@ -39,16 +43,16 @@ export function PrayerInfoModal() {
             <li>Latitude and longitude of the location</li>
             <li>Date (as prayer times vary throughout the year)</li>
             <li>Angle of the sun for Fajr and Isha prayers</li>
-            <li>Madhab for Asr prayer calculation (Shafi'i or Hanafi)</li>
+            <li>Madhab for Asr prayer calculation (Shafi&apos;i or Hanafi)</li>
           </ul>
           <p>
             The API takes these factors into account to provide accurate prayer times for any location worldwide.
           </p>
-          <a 
-            href="https://aladhan.com/prayer-times-api" 
-            target="_blank" 
+          <a
+            href="https://aladhan.com/prayer-times-api"
+            target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center text-emerald-700 hover:text-emerald-600"
+            className="flex items-center text-black hover:text-gray-700"
           >
             Learn more about the Aladhan API
             <ExternalLink className="ml-1 h-4 w-4" />
@@ -56,6 +60,7 @@ export function PrayerInfoModal() {
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
+export default PrayerInfoModal;
