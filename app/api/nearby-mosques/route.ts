@@ -7,6 +7,12 @@ interface Mosque {
   lon: number;
 }
 
+interface OverpassElement {
+  tags: { name?: string };
+  lat: number;
+  lon: number;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const lat = searchParams.get('lat');
@@ -17,8 +23,6 @@ export async function GET(request: Request) {
   }
 
   const radius = 5000; // 5km radius
-  const limit = 10; // Limit to 10 results
-
   const query = `
     [out:json];
     (
@@ -26,7 +30,7 @@ export async function GET(request: Request) {
       way["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lon});
       relation["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lon});
     );
-    out center ${limit};
+    out center;
   `;
 
   try {
@@ -41,15 +45,16 @@ export async function GET(request: Request) {
 
     const data = await response.json();
 
-    const mosques: Mosque[] = data.elements.map((element: any) => {
-      const mosque: Mosque = {
-        name: element.tags.name || 'Unnamed Mosque',
-        distance: calculateDistance(Number(lat), Number(lon), element.lat, element.lon),
-        lat: element.lat,
-        lon: element.lon,
-      };
-      return mosque;
-    });
+    if (!Array.isArray(data.elements)) {
+      return NextResponse.json({ error: 'Unexpected response from Overpass API' }, { status: 500 });
+    }
+
+    const mosques: Mosque[] = data.elements.map((element: OverpassElement) => ({
+      name: element.tags.name || 'Unnamed Mosque',
+      distance: calculateDistance(Number(lat), Number(lon), element.lat, element.lon),
+      lat: element.lat,
+      lon: element.lon,
+    }));
 
     mosques.sort((a, b) => a.distance - b.distance);
 
@@ -69,11 +74,9 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
     Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const d = R * c; // Distance in km
-  return d;
+  return R * c; // Distance in km
 }
 
 function deg2rad(deg: number): number {
   return deg * (Math.PI / 180);
 }
-
